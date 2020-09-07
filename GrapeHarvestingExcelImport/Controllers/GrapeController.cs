@@ -41,13 +41,19 @@ namespace GrapeHarvestingExcelImport.Controllers
             Recordset recSet2 = (Recordset)DiManager.Company.GetBusinessObject(BoObjectTypes.BoRecordset);
             recSet2.DoQuery($"select Series from NNM1 where Locked != 'Y' AND SeriesType = 'B' AND IsManual = 'N' AND DocSubType = 'S'");
             int series = int.Parse(recSet2.Fields.Item("Series").Value.ToString());
+            List<string> AccPayableList = new List<string>();
 
-            recSet.DoQuery($"SELECT CardCode, isnull(VatIdUnCmp,LicTradNum) bpId FROM OCRD WHERE CardType = 'S'  AND VatIdUnCmp is not null AND LicTradNum is not null");
+
+            recSet.DoQuery($"SELECT DebPayAcct, LicTradNum, CardCode, isnull(VatIdUnCmp,LicTradNum) bpId FROM OCRD WHERE CardType = 'S'  AND VatIdUnCmp is not null AND LicTradNum is not null");
             List<string> duplicates = new List<string>();
             while (!recSet.EoF)
             {
                 string cardCode = recSet.Fields.Item("CardCode").Value.ToString();
                 string id = recSet.Fields.Item("bpId").Value.ToString();
+
+                string accPayable = recSet.Fields.Item("DebPayAcct").Value.ToString();
+                AccPayableList.Add(accPayable);
+
                 if (id == string.Empty)
                 {
                     recSet.MoveNext();
@@ -72,6 +78,7 @@ namespace GrapeHarvestingExcelImport.Controllers
 
             foreach (DataRow row in rows.Skip(1))
             {
+                int i = 0;
                 string dateString = row[excelIndexes["თარიღი"]].ToString();
                 double dateDouble;
                 bool isNumeric = double.TryParse(dateString, out dateDouble);
@@ -97,12 +104,14 @@ namespace GrapeHarvestingExcelImport.Controllers
                     Quantity = quantity
                 };
 
-                if (bpIdsAndCardCodes.ContainsKey(id))
+                string account = AccPayableList.ElementAt(i).ToString();
+                if (bpIdsAndCardCodes.ContainsKey(id) && account == "3112/001")
                 {
                     model.CardCode = bpIdsAndCardCodes[id];
                 }
                 else
                 {
+                    //BusinessPartners bp = new BusinessPartners();
                     BusinessPartners businessPartnerObject = (BusinessPartners)DiManager.Company.GetBusinessObject(BoObjectTypes.oBusinessPartners);
                     businessPartnerObject.FederalTaxID = id;
                     businessPartnerObject.UnifiedFederalTaxID = id;
@@ -126,6 +135,7 @@ namespace GrapeHarvestingExcelImport.Controllers
                     model.CardCode = cardCode;
                 }
                 invoices.Add(model);
+                i++;
             }
 
             return invoices;
