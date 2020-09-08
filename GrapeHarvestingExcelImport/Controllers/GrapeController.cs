@@ -41,18 +41,17 @@ namespace GrapeHarvestingExcelImport.Controllers
             Recordset recSet2 = (Recordset)DiManager.Company.GetBusinessObject(BoObjectTypes.BoRecordset);
             recSet2.DoQuery($"select Series from NNM1 where Locked != 'Y' AND SeriesType = 'B' AND IsManual = 'N' AND DocSubType = 'S'");
             int series = int.Parse(recSet2.Fields.Item("Series").Value.ToString());
-            List<string> AccPayableList = new List<string>();
 
+            recSet.DoQuery($"SELECT CardCode, isnull(VatIdUnCmp,LicTradNum) bpId FROM OCRD WHERE CardType = 'S' AND VatIdUnCmp is not null AND LicTradNum is not null");
 
-            recSet.DoQuery($"SELECT DebPayAcct, LicTradNum, CardCode, isnull(VatIdUnCmp,LicTradNum) bpId FROM OCRD WHERE CardType = 'S'  AND VatIdUnCmp is not null AND LicTradNum is not null");
             List<string> duplicates = new List<string>();
+
+            int j = 0;
             while (!recSet.EoF)
             {
+
                 string cardCode = recSet.Fields.Item("CardCode").Value.ToString();
                 string id = recSet.Fields.Item("bpId").Value.ToString();
-
-                string accPayable = recSet.Fields.Item("DebPayAcct").Value.ToString();
-                AccPayableList.Add(accPayable);
 
                 if (id == string.Empty)
                 {
@@ -63,12 +62,21 @@ namespace GrapeHarvestingExcelImport.Controllers
                 {
                     bpIdsAndCardCodes.Add(id, cardCode);
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
                     duplicates.Add(id);
                     recSet.MoveNext();
+
                 }
-                recSet.MoveNext();
+                try
+                {
+                    recSet.MoveNext();
+                    j++;
+                }
+                catch (Exception x)
+                {
+                    throw x;
+                }
             }
             if (duplicates.Count > 0)
             {
@@ -78,7 +86,6 @@ namespace GrapeHarvestingExcelImport.Controllers
 
             foreach (DataRow row in rows.Skip(1))
             {
-                int i = 0;
                 string dateString = row[excelIndexes["თარიღი"]].ToString();
                 double dateDouble;
                 bool isNumeric = double.TryParse(dateString, out dateDouble);
@@ -102,43 +109,60 @@ namespace GrapeHarvestingExcelImport.Controllers
                     PostingDate = postingDate,
                     Price = price,
                     Quantity = quantity
-                };
+                };                
 
-                string account = AccPayableList.ElementAt(i).ToString();
-                if (bpIdsAndCardCodes.ContainsKey(id) && account == "3112/001")
+               
+                if (bpIdsAndCardCodes.ContainsKey(id))
                 {
-                    model.CardCode = bpIdsAndCardCodes[id];
+                    string cardCodeValue = bpIdsAndCardCodes[id].ToString();
+                    Recordset recSet3 = (Recordset)DiManager.Company.GetBusinessObject(BoObjectTypes.BoRecordset);
+                    var query = $@"SELECT DebPayAcct FROM OCRD WHERE CardCode = '{cardCodeValue}'";
+                    recSet3.DoQuery(query);
+
+                    if(recSet3.Fields.Item(0).Value.ToString() != "3112/001")
+                        cardCode = CreateBP(bpIdsAndCardCodes, series, firsName, lastName, id, cardCode, model);
+                    else 
+                        model.CardCode = bpIdsAndCardCodes[id];
                 }
                 else
                 {
-                    //BusinessPartners bp = new BusinessPartners();
-                    BusinessPartners businessPartnerObject = (BusinessPartners)DiManager.Company.GetBusinessObject(BoObjectTypes.oBusinessPartners);
-                    businessPartnerObject.FederalTaxID = id;
-                    businessPartnerObject.UnifiedFederalTaxID = id;
-                    businessPartnerObject.CardName = firsName + ' ' + lastName;
-                    businessPartnerObject.CardType = BoCardTypes.cSupplier;
-                    businessPartnerObject.Series = series;
-                    businessPartnerObject.Territory = 1;
-                    businessPartnerObject.GroupCode = 104;
-                    businessPartnerObject.DebitorAccount = "3112/001";
-                    businessPartnerObject.AccountRecivablePayables.Add();
-                    int res = businessPartnerObject.Add();
-                    if (res == 0)
-                    {
-                        cardCode = DiManager.Company.GetNewObjectKey();
-                    }
-                    else
-                    {
-                        string err = DiManager.Company.GetLastErrorDescription();
-                        SAPbouiCOM.Framework.Application.SBO_Application.MessageBox(err);
-                    }
-                    model.CardCode = cardCode;
+                    cardCode = CreateBP(bpIdsAndCardCodes, series, firsName, lastName, id, cardCode, model);
                 }
                 invoices.Add(model);
-                i++;
             }
 
             return invoices;
+        }
+
+        private static string CreateBP(Dictionary<string, string> bpIdsAndCardCodes, int series, string firsName, string lastName, string id, string cardCode, InvoiceModel model)
+        {
+            BusinessPartners businessPartnerObject = (BusinessPartners)DiManager.Company.GetBusinessObject(BoObjectTypes.oBusinessPartners);          
+            businessPartnerObject.FederalTaxID = id;
+            businessPartnerObject.UnifiedFederalTaxID = id;
+            businessPartnerObject.CardName = firsName + ' ' + lastName;
+            businessPartnerObject.CardType = BoCardTypes.cSupplier;
+            businessPartnerObject.Series = series;
+            businessPartnerObject.Territory = 1;
+            businessPartnerObject.GroupCode = 104;
+            businessPartnerObject.DebitorAccount = "3112/001";
+            
+            if(bpIdsAndCardCodes.ContainsKey(id))
+                businessPartnerObject.UserFields.Fields.Item("U_ConnBpV").Value = bpIdsAndCardCodes[id].ToString();
+
+            businessPartnerObject.AccountRecivablePayables.Add();
+            int res = businessPartnerObject.Add();
+
+            if (res == 0)
+            {
+                cardCode = DiManager.Company.GetNewObjectKey();
+            }
+            else
+            {
+                string err = DiManager.Company.GetLastErrorDescription();
+                SAPbouiCOM.Framework.Application.SBO_Application.MessageBox(err);
+            }
+            model.CardCode = cardCode;
+            return cardCode;
         }
     }
 }
