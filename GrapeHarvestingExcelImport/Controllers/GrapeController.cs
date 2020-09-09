@@ -47,6 +47,8 @@ namespace GrapeHarvestingExcelImport.Controllers
             List<string> duplicates = new List<string>();
 
             int j = 0;
+            int k = 0;
+
             while (!recSet.EoF)
             {
 
@@ -64,9 +66,8 @@ namespace GrapeHarvestingExcelImport.Controllers
                 }
                 catch (Exception ex)
                 {
-                    duplicates.Add(id);
-                    recSet.MoveNext();
-
+                    duplicates.Add(id);                    
+                    //recSet.MoveNext();
                 }
                 try
                 {
