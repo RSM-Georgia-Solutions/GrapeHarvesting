@@ -140,7 +140,7 @@ namespace GrapeHarvestingExcelImport.Controllers
 
                     if (BpCodeAndPayAcct.Any(tr => tr.Value.Equals("3112/001", StringComparison.CurrentCultureIgnoreCase)))
                     {
-                        model.CardCode = bpIdsAndCardCodes[id];
+                        model.CardCode = BpCodeAndPayAcct.FirstOrDefault(code => code.Value == "3112/001").Key;
                     }
                     else
                         cardCode = CreateBP(bpIdsAndCardCodes, series, firsName, lastName, id, cardCode, model);                    
