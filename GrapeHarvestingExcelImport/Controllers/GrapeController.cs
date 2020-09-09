@@ -115,15 +115,35 @@ namespace GrapeHarvestingExcelImport.Controllers
                
                 if (bpIdsAndCardCodes.ContainsKey(id))
                 {
-                    string cardCodeValue = bpIdsAndCardCodes[id].ToString();
                     Recordset recSet3 = (Recordset)DiManager.Company.GetBusinessObject(BoObjectTypes.BoRecordset);
-                    var query = $@"SELECT DebPayAcct FROM OCRD WHERE CardCode = '{cardCodeValue}'";
-                    recSet3.DoQuery(query);
+                    Recordset recSet4 = (Recordset)DiManager.Company.GetBusinessObject(BoObjectTypes.BoRecordset);
+                    var query1 = $@"SELECT CardCode, DebPayAcct FROM OCRD WHERE LicTradNum = '{id}'";
+                    recSet3.DoQuery(query1);
 
-                    if(recSet3.Fields.Item(0).Value.ToString() != "3112/001")
-                        cardCode = CreateBP(bpIdsAndCardCodes, series, firsName, lastName, id, cardCode, model);
-                    else 
+                    Dictionary<string, string> BpCodeAndPayAcct = new Dictionary<string, string>();
+                    string bPCode;
+                    string PayAcct;
+
+                    while (!recSet3.EoF)
+                    {
+                        bPCode = recSet3.Fields.Item("CardCode").Value.ToString();
+                        PayAcct = recSet3.Fields.Item("DebPayAcct").Value.ToString();
+
+                        if (bPCode != string.Empty)
+                        {
+                            BpCodeAndPayAcct.Add(bPCode, PayAcct);
+                            recSet3.MoveNext();
+                        }
+                        else
+                            continue;
+                    }
+
+                    if (BpCodeAndPayAcct.Any(tr => tr.Value.Equals("3112/001", StringComparison.CurrentCultureIgnoreCase)))
+                    {
                         model.CardCode = bpIdsAndCardCodes[id];
+                    }
+                    else
+                        cardCode = CreateBP(bpIdsAndCardCodes, series, firsName, lastName, id, cardCode, model);                    
                 }
                 else
                 {

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<AddOnRegData xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" SlientInstallation="No" SlientUpgrade="No" Partnernmsp="RSM" SchemaVersion="3.0" Type="" MultipleVersion="false" OnDemand="" OnPremise="" ExtName="GrapeHarvestingExcelImport 1.4" ExtVersion="1.4" Contdata="nkurdadze@rsm.ge" Partner="RSM" DBType="MSSQL" ClientType="A">
+<AddOnRegData xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" SlientInstallation="No" SlientUpgrade="No" Partnernmsp="RSM" SchemaVersion="3.0" Type="" MultipleVersion="false" OnDemand="" OnPremise="" ExtName="GrapeHarvestingExcelImport 1.6" ExtVersion="1.6" Contdata="mnarchemashvili@rsm.ge" Partner="RSM" DBType="MSSQL" ClientType="A">
   <Validity>
     <SBOCompatibility>
       <Version From="900.000.00" To="940.000.00" />
@@ -18,28 +18,9 @@
   </Configuration>
   <Addons>
     <Addon Name="" Group="" ForceFlag="" Visible="" AutoAssign="" SelfUpgrd="">
-      <x86 AddonExe="D:\Users\nkurdadze\Documents\Visual Studio 2015\Projects\GrapeHarvestingExcelImport\GrapeHarvestingExcelImport\bin\Debug\GrapeHarvestingExcelImport.exe" AddonSig="">
+      <x86 AddonExe="C:\Users\mnarchemashvili\Desktop\git\GrapeHarvesting\GrapeHarvestingExcelImport\bin\Debug\GrapeHarvestingExcelImport.exe" AddonSig="">
         <Installation>
           <Files>
-            <File FileName="GrapeHarvestingExcelImport.exe">
-              <Actions />
-            </File>
-          </Files>
-        </Installation>
-        <Uninstallation>
-          <Files>
-            <File FileName="GrapeHarvestingExcelImport.exe">
-              <Actions />
-            </File>
-          </Files>
-        </Uninstallation>
-      </x86>
-      <x64 AddonExe="D:\Users\nkurdadze\Documents\Visual Studio 2015\Projects\GrapeHarvestingExcelImport\GrapeHarvestingExcelImport\bin\Debug\GrapeHarvestingExcelImport.exe" AddonSig="">
-        <Installation>
-          <Files>
-            <File FileName="Antlr3.Runtime.dll">
-              <Actions />
-            </File>
             <File FileName="Appocalypto.dll">
               <Actions />
             </File>
@@ -83,9 +64,94 @@
         </Installation>
         <Uninstallation>
           <Files>
-            <File FileName="Antlr3.Runtime.dll">
+            <File FileName="Appocalypto.dll">
               <Actions />
             </File>
+            <File FileName="ConverterLib_x64.dll">
+              <Actions />
+            </File>
+            <File FileName="ExcelImportDll.dll">
+              <Actions />
+            </File>
+            <File FileName="ExcelImportDll.pdb">
+              <Actions />
+            </File>
+            <File FileName="GrapeHarvestingExcelImport.b1s">
+              <Actions />
+            </File>
+            <File FileName="GrapeHarvestingExcelImport.exe">
+              <Actions />
+            </File>
+            <File FileName="GrapeHarvestingExcelImport.pdb">
+              <Actions />
+            </File>
+            <File FileName="GrapeHarvestingExcelImport.vshost.exe">
+              <Actions />
+            </File>
+            <File FileName="GrapeHarvestingExcelImport.vshost.exe.manifest">
+              <Actions />
+            </File>
+            <File FileName="SAPBusinessOneSDK.dll">
+              <Actions />
+            </File>
+            <File FileName="Media\c9.bmp">
+              <Actions />
+            </File>
+            <File FileName="Media\Icon.bmp">
+              <Actions />
+            </File>
+            <File FileName="Media\Sap.bmp">
+              <Actions />
+            </File>
+          </Files>
+        </Uninstallation>
+      </x86>
+      <x64 AddonExe="C:\Users\mnarchemashvili\Desktop\git\GrapeHarvesting\GrapeHarvestingExcelImport\bin\Debug\GrapeHarvestingExcelImport.exe" AddonSig="">
+        <Installation>
+          <Files>
+            <File FileName="Appocalypto.dll">
+              <Actions />
+            </File>
+            <File FileName="ConverterLib_x64.dll">
+              <Actions />
+            </File>
+            <File FileName="ExcelImportDll.dll">
+              <Actions />
+            </File>
+            <File FileName="ExcelImportDll.pdb">
+              <Actions />
+            </File>
+            <File FileName="GrapeHarvestingExcelImport.b1s">
+              <Actions />
+            </File>
+            <File FileName="GrapeHarvestingExcelImport.exe">
+              <Actions />
+            </File>
+            <File FileName="GrapeHarvestingExcelImport.pdb">
+              <Actions />
+            </File>
+            <File FileName="GrapeHarvestingExcelImport.vshost.exe">
+              <Actions />
+            </File>
+            <File FileName="GrapeHarvestingExcelImport.vshost.exe.manifest">
+              <Actions />
+            </File>
+            <File FileName="SAPBusinessOneSDK.dll">
+              <Actions />
+            </File>
+            <File FileName="Media\c9.bmp">
+              <Actions />
+            </File>
+            <File FileName="Media\Icon.bmp">
+              <Actions />
+            </File>
+            <File FileName="Media\Sap.bmp">
+              <Actions />
+            </File>
+          </Files>
+        </Installation>
+        <Uninstallation>
+          <Files>
             <File FileName="Appocalypto.dll">
               <Actions />
             </File>
