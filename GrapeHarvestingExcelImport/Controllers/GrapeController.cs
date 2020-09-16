@@ -51,7 +51,6 @@ namespace GrapeHarvestingExcelImport.Controllers
 
             while (!recSet.EoF)
             {
-
                 string cardCode = recSet.Fields.Item("CardCode").Value.ToString();
                 string id = recSet.Fields.Item("bpId").Value.ToString();
 
@@ -113,7 +112,7 @@ namespace GrapeHarvestingExcelImport.Controllers
                 };                
 
                
-                if (bpIdsAndCardCodes.ContainsKey(id))
+                if (bpIdsAndCardCodes.ContainsKey(id)) 
                 {
                     Recordset recSet3 = (Recordset)DiManager.Company.GetBusinessObject(BoObjectTypes.BoRecordset);
                     Recordset recSet4 = (Recordset)DiManager.Company.GetBusinessObject(BoObjectTypes.BoRecordset);
@@ -151,7 +150,6 @@ namespace GrapeHarvestingExcelImport.Controllers
                 }
                 invoices.Add(model);
             }
-
             return invoices;
         }
 
@@ -183,6 +181,8 @@ namespace GrapeHarvestingExcelImport.Controllers
                 SAPbouiCOM.Framework.Application.SBO_Application.MessageBox(err);
             }
             model.CardCode = cardCode;
+            bpIdsAndCardCodes.Add(id, cardCode);
+
             return cardCode;
         }
     }
