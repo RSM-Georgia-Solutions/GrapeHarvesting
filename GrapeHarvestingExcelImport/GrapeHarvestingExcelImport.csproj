@@ -35,16 +35,14 @@
     <StartupObject>GrapeHarvestingExcelImport.Program</StartupObject>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Appocalypto, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Appocalypto.1.1.0\lib\net452\Appocalypto.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Appocalypto">
+      <HintPath>..\References\Appocalypto.dll</HintPath>
     </Reference>
     <Reference Include="ConverterLib_x64">
-      <HintPath>..\..\ExciseDll\ExciseDll\bin\Debug\ConverterLib_x64.dll</HintPath>
+      <HintPath>..\References\ConverterLib_x64.dll</HintPath>
     </Reference>
-    <Reference Include="ExcelImportDll, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\ExcelImportDll\bin\Debug\ExcelImportDll.dll</HintPath>
+    <Reference Include="ExcelImportDll">
+      <HintPath>..\References\ExcelImportDll.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />

@@ -46,8 +46,6 @@ namespace GrapeHarvestingExcelImport.Controllers
 
             List<string> duplicates = new List<string>();
 
-            int j = 0;
-            int k = 0;
 
             while (!recSet.EoF)
             {
@@ -59,24 +57,19 @@ namespace GrapeHarvestingExcelImport.Controllers
                     recSet.MoveNext();
                     continue;
                 }
-                try
+
+
+                if (!bpIdsAndCardCodes.ContainsKey(id))
                 {
                     bpIdsAndCardCodes.Add(id, cardCode);
                 }
-                catch (Exception ex)
+                else
                 {
-                    duplicates.Add(id);                    
-                    //recSet.MoveNext();
+                    duplicates.Add(id);
                 }
-                try
-                {
-                    recSet.MoveNext();
-                    j++;
-                }
-                catch (Exception x)
-                {
-                    throw x;
-                }
+
+
+                recSet.MoveNext();
             }
             if (duplicates.Count > 0)
             {
@@ -109,10 +102,10 @@ namespace GrapeHarvestingExcelImport.Controllers
                     PostingDate = postingDate,
                     Price = price,
                     Quantity = quantity
-                };                
+                };
 
-               
-                if (bpIdsAndCardCodes.ContainsKey(id)) 
+
+                if (bpIdsAndCardCodes.ContainsKey(id))
                 {
                     Recordset recSet3 = (Recordset)DiManager.Company.GetBusinessObject(BoObjectTypes.BoRecordset);
                     Recordset recSet4 = (Recordset)DiManager.Company.GetBusinessObject(BoObjectTypes.BoRecordset);
@@ -142,7 +135,7 @@ namespace GrapeHarvestingExcelImport.Controllers
                         model.CardCode = BpCodeAndPayAcct.FirstOrDefault(code => code.Value == "3112/001").Key;
                     }
                     else
-                        cardCode = CreateBP(bpIdsAndCardCodes, series, firsName, lastName, id, cardCode, model);                    
+                        cardCode = CreateBP(bpIdsAndCardCodes, series, firsName, lastName, id, cardCode, model);
                 }
                 else
                 {
@@ -155,7 +148,7 @@ namespace GrapeHarvestingExcelImport.Controllers
 
         private static string CreateBP(Dictionary<string, string> bpIdsAndCardCodes, int series, string firsName, string lastName, string id, string cardCode, InvoiceModel model)
         {
-            BusinessPartners businessPartnerObject = (BusinessPartners)DiManager.Company.GetBusinessObject(BoObjectTypes.oBusinessPartners);          
+            BusinessPartners businessPartnerObject = (BusinessPartners)DiManager.Company.GetBusinessObject(BoObjectTypes.oBusinessPartners);
             businessPartnerObject.FederalTaxID = id;
             businessPartnerObject.UnifiedFederalTaxID = id;
             businessPartnerObject.CardName = firsName + ' ' + lastName;
@@ -164,8 +157,8 @@ namespace GrapeHarvestingExcelImport.Controllers
             businessPartnerObject.Territory = 1;
             businessPartnerObject.GroupCode = 104;
             businessPartnerObject.DebitorAccount = "3112/001";
-            
-            if(bpIdsAndCardCodes.ContainsKey(id))
+
+            if (bpIdsAndCardCodes.ContainsKey(id))
                 businessPartnerObject.UserFields.Fields.Item("U_ConnBpV").Value = bpIdsAndCardCodes[id].ToString();
 
             businessPartnerObject.AccountRecivablePayables.Add();
@@ -181,7 +174,14 @@ namespace GrapeHarvestingExcelImport.Controllers
                 SAPbouiCOM.Framework.Application.SBO_Application.MessageBox(err);
             }
             model.CardCode = cardCode;
-            bpIdsAndCardCodes.Add(id, cardCode);
+            if(!bpIdsAndCardCodes.ContainsKey(id))
+            {
+                bpIdsAndCardCodes.Add(id, cardCode);
+            }
+            else
+            {
+                var x = id;
+            }
 
             return cardCode;
         }
